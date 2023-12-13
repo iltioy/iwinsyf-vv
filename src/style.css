@@ -1,6 +1,5 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-    line-height: 1.5;
     font-weight: 400;
 }
 
@@ -21,6 +20,16 @@ body,
     color: white;
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
 .scene {
     width: 100%;
     height: 100%;
@@ -29,11 +38,40 @@ body,
     font-size: 100px;
     font-weight: bold;
     text-shadow: 1px 1px 5px white;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.textWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hiddenText {
+    opacity: 0;
 }
 
 .text {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -10%);
+    margin-right: 40px;
+}
+
+.highText {
+    font-size: 100px;
+}
+
+.mediumText {
+    font-size: 80px;
+}
+
+.lowText {
+    font-size: 60px;
+}
+
+.new-row,
+hr {
+    display: block;
+    width: 100%;
+    height: 0px;
 }

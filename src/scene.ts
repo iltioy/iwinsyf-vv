@@ -1,220 +1,54 @@
 import iwinsyf_audio from "./audio/setitoff.mp3";
+import { scene2 as scene } from "./scenes";
 
 interface sceneItemType {
     text: string;
     duration: number;
-    variant?: string;
+    variant?: variant;
 }
 
 interface variant {
-    types: variantTypes[];
-    textLevel: textLevelsTypes;
-    addingText?: [];
+    types: variants[];
+    textLevel: textLevels;
+    textDirection: "row" | "column";
+    addingText: addingTextItem[];
+    wrappers: wrapper[];
 }
 
-enum variantTypes {
+enum variants {
     plain,
     addingText,
     furcation,
 }
 
-enum textLevelsTypes {
+enum textLevels {
     low,
     medium,
     high,
 }
 
-interface addingTextItem {
-    text: string;
-    duration: number;
-    textLevel: textLevelsTypes;
+interface wrapper {
+    name: string;
+    flex: "row" | "column";
 }
 
-export const scene: sceneItemType[] = [
-    {
-        text: "",
-        duration: 0,
-    },
-    {
-        text: "I WISH",
-        duration: 400,
-    },
-    {
-        text: "I NEVER",
-        duration: 300,
-    },
-    {
-        text: "SAW",
-        duration: 300,
-    },
-    {
-        text: "YOUR",
-        duration: 300,
-    },
-    {
-        text: "FACE",
-        duration: 700,
-    },
-    {
-        text: "THEN",
-        duration: 300,
-    },
-    {
-        text: "I WOULDN'T",
-        duration: 400,
-    },
-    {
-        text: "NEED",
-        duration: 300,
-    },
-    {
-        text: "A PLACE",
-        duration: 700,
-    },
-    {
-        text: "TO FRAME",
-        duration: 400,
-    },
-    {
-        text: "YOU",
-        duration: 400,
-    },
-    {
-        text: "IN",
-        duration: 400,
-    },
-    {
-        text: "MY MIND",
-        duration: 1900,
-    },
-    {
-        text: "HANGING",
-        duration: 400,
-    },
-    {
-        text: "ON",
-        duration: 300,
-    },
-    {
-        text: "THE",
-        duration: 300,
-    },
-    {
-        text: "WALL",
-        duration: 500,
-    },
-    {
-        text: "MY MEMORIES",
-        duration: 700,
-    },
-    {
-        text: "AND",
-        duration: 300,
-    },
-    {
-        text: "ALL",
-        duration: 300,
-    },
-    {
-        text: "BUT YOU'RE",
-        duration: 800,
-    },
-    {
-        text: "NOT TANGIBLE",
-        duration: 1700,
-    },
-    {
-        text: "STUCK",
-        duration: 400,
-    },
-    {
-        text: "ON SENTIMENTAL",
-        duration: 2700,
-    },
-    {
-        text: "THE HISTORY",
-        duration: 500,
-    },
-    {
-        text: "WE NEVER HAD",
-        duration: 2600,
-    },
-    {
-        text: "ALMOST",
-        duration: 400,
-    },
-    {
-        text: "ACCIDENTAL",
-        duration: 2300,
-    },
-    {
-        text: "THE WAY",
-        duration: 500,
-    },
-    {
-        text: "YOU LIVE",
-        duration: 500,
-    },
-    {
-        text: "INSIDE",
-        duration: 600,
-    },
-    {
-        text: "MY HEAD",
-        duration: 1900,
-    },
-    {
-        text: "I WOULD",
-        duration: 300,
-    },
-    {
-        text: "KILL",
-        duration: 300,
-    },
-    {
-        text: "TO BE",
-        duration: 300,
-    },
-    {
-        text: "A MILE AWAY",
-        duration: 300,
-    },
-    {
-        text: "OR FELL",
-        duration: 300,
-    },
-    {
-        text: "THE BREATH",
-        duration: 300,
-    },
-    {
-        text: "YOU TAKE",
-        duration: 300,
-    },
-    {
-        text: "BUT",
-        duration: 300,
-    },
-    {
-        text: "FATE",
-        duration: 300,
-    },
-    {
-        text: "WON'T",
-        duration: 300,
-    },
-    {
-        text: "LET",
-        duration: 300,
-    },
-    {
-        text: "ME",
-        duration: 300,
-    },
-];
+interface addingTextItem {
+    text: string;
+    timeToWait: number;
+    textLevel: textLevels;
+    wrapper?: string;
+    spread?: spreadLetter;
+}
+
+interface spreadLetter {
+    index: number;
+    count: number;
+    timePerLetter: number;
+}
 
 let sceneElement = document.querySelector(".scene")!;
 let textSceneElement = document.querySelector(".text")!;
+let textWrapperElement = document.querySelector(".textWrapper")!;
 
 const audio = new Audio(iwinsyf_audio);
 
@@ -222,6 +56,8 @@ let isScenePlaying = false;
 
 export const setupScene = () => {
     sceneElement = document.querySelector(".scene")!;
+    textSceneElement = document.querySelector(".text")!;
+    textWrapperElement = document.querySelector(".textWrapper")!;
 
     sceneElement.addEventListener("click", () => {
         if (!isScenePlaying) {
@@ -231,9 +67,26 @@ export const setupScene = () => {
     });
 };
 
+export const runScene = () => {
+    sceneElement = document.querySelector(".scene")!;
+    textSceneElement = document.querySelector(".text")!;
+
+    const { audioTime, sceneId } = getStartingId(0);
+    audio.currentTime = audioTime;
+    audio.play();
+
+    changeScene(sceneId);
+};
+
 const changeScene = (sceneItemId = 0) => {
     let sceneItem: sceneItemType = scene[sceneItemId];
-    textSceneElement.innerHTML = sceneItem.text;
+
+    textWrapperElement.classList.remove("column");
+    textWrapperElement.classList.add("row");
+
+    textWrapperElement.innerHTML = sceneItem.text;
+    handleAddingScene(sceneItem);
+
     setTimeout(() => {
         if (sceneItemId + 1 !== scene.length) {
             changeScene(sceneItemId + 1);
@@ -241,12 +94,74 @@ const changeScene = (sceneItemId = 0) => {
     }, sceneItem.duration);
 };
 
-export const runScene = () => {
-    sceneElement = document.querySelector(".scene")!;
-    textSceneElement = document.querySelector(".text")!;
+const getStartingId = (timeToSkip: number) => {
+    let timeInMs = timeToSkip * 1000;
+    let skippedTime = 0;
+    let currId = 0;
 
-    console.log(audio);
-    audio.play();
+    while (skippedTime < timeInMs) {
+        skippedTime += scene[currId].duration;
+        currId++;
+    }
 
-    changeScene(0);
+    return { sceneId: currId, audioTime: skippedTime / 1000 };
+};
+
+const handleAddingScene = (sceneItem: sceneItemType) => {
+    if (!sceneItem.variant) return;
+    if (!sceneItem.variant.types.includes(variants.addingText)) return;
+    if (sceneItem.variant.addingText.length === 0) return;
+
+    const { variant } = sceneItem;
+
+    if (variant.textDirection == "column") {
+        textWrapperElement.classList.remove("row");
+        textWrapperElement.classList.add("column");
+    }
+
+    for (let i = 0; i < variant.wrappers.length; i++) {
+        let { flex, name } = variant.wrappers[i];
+        textWrapperElement.innerHTML += `
+            <div class="${flex} ${name}"></div>
+        `;
+    }
+
+    for (let i = 0; i < variant.addingText.length; i++) {
+        let { text, wrapper } = variant.addingText[i];
+        let wrapperElement = textWrapperElement;
+
+        if (wrapper) {
+            wrapperElement = document.querySelector(`.${wrapper}`)!;
+        }
+
+        wrapperElement.innerHTML += `
+            <div class="text ${i !== 0 && "hiddenText"}">
+                ${text}
+            </div>
+        `;
+    }
+
+    changeAddingScene(1, variant);
+    // setTimeout(() => {
+    //     textWrapperElement.innerHTML += `
+    //         <div>${variant.addingText[0].text}</div>
+    //     `;
+    // }, variant.addingText[0].timeToWait);
+};
+
+const changeAddingScene = (addingSceneId = 0, variant: variant) => {
+    if (addingSceneId + 1 > variant.addingText.length) return;
+
+    // if (addingSceneId === 0) {
+    //     changeAddingScene(1, variant);
+    //     return;
+    // }
+    const { timeToWait } = variant.addingText[addingSceneId];
+    const hiddenElements = document.getElementsByClassName("hiddenText");
+    if (hiddenElements.length < 1) return;
+
+    setTimeout(() => {
+        hiddenElements[0].classList.remove("hiddenText");
+        changeAddingScene(addingSceneId + 1, variant);
+    }, timeToWait);
 };
