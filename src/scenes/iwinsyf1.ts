@@ -19,9 +19,9 @@ enum variants {
 }
 
 enum textLevels {
-    low,
-    medium,
-    high,
+    low = "lowText",
+    medium = "mediumText",
+    high = "highText",
 }
 
 interface wrapper {
@@ -41,8 +41,8 @@ interface spreadLetter {
     index: number;
     count: number;
     timePerLetter: number;
+    delay: number;
 }
-
 export const scene1: sceneItemType[] = [
     {
         text: "",

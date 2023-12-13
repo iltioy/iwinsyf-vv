@@ -19,9 +19,9 @@ enum variants {
 }
 
 enum textLevels {
-    low,
-    medium,
-    high,
+    low = "lowText",
+    medium = "mediumText",
+    high = "highText",
 }
 
 interface wrapper {
@@ -41,6 +41,7 @@ interface spreadLetter {
     index: number;
     count: number;
     timePerLetter: number;
+    delay: number;
 }
 
 export const scene2: sceneItemType[] = [
@@ -316,8 +317,9 @@ export const scene2: sceneItemType[] = [
                     timeToWait: 800,
                     spread: {
                         index: 1,
-                        count: 5,
-                        timePerLetter: 100,
+                        count: 3,
+                        timePerLetter: 70,
+                        delay: 0,
                     },
                 },
             ],
@@ -350,6 +352,12 @@ export const scene2: sceneItemType[] = [
                     text: "ACCIDENTAL ",
                     textLevel: textLevels.high,
                     timeToWait: 700,
+                    // spread: {
+                    //     count: 3,
+                    //     index: 8,
+                    //     timePerLetter: 70,
+                    //     delay: 900,
+                    // },
                 },
             ],
         },
@@ -369,6 +377,24 @@ export const scene2: sceneItemType[] = [
     {
         text: "MY HEAD",
         duration: 1600,
+        // variant: {
+        //     textDirection: "row",
+        //     textLevel: textLevels.high,
+        //     types: [variants.addingText],
+        //     wrappers: [],
+        //     addingText: [
+        //         {
+        //             text: "MY HEAD",
+        //             textLevel: textLevels.high,
+        //             timeToWait: 0,
+        //             spread: {
+        //                 count: 5,
+        //                 index: 5,
+        //                 timePerLetter: 20,
+        //             },
+        //         },
+        //     ],
+        // },
     },
     {
         text: "I",

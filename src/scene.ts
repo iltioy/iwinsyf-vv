@@ -22,9 +22,9 @@ enum variants {
 }
 
 enum textLevels {
-    low,
-    medium,
-    high,
+    low = "lowText",
+    medium = "mediumText",
+    high = "highText",
 }
 
 interface wrapper {
@@ -44,6 +44,7 @@ interface spreadLetter {
     index: number;
     count: number;
     timePerLetter: number;
+    delay: number;
 }
 
 let sceneElement = document.querySelector(".scene")!;
@@ -71,11 +72,24 @@ export const runScene = () => {
     sceneElement = document.querySelector(".scene")!;
     textSceneElement = document.querySelector(".text")!;
 
-    const { audioTime, sceneId } = getStartingId(0);
+    const { audioTime, sceneId } = getStartingId(25);
     audio.currentTime = audioTime;
     audio.play();
 
     changeScene(sceneId);
+};
+
+const getStartingId = (timeToSkip: number) => {
+    let timeInMs = timeToSkip * 1000;
+    let skippedTime = 0;
+    let currId = 0;
+
+    while (skippedTime < timeInMs) {
+        skippedTime += scene[currId].duration;
+        currId++;
+    }
+
+    return { sceneId: currId, audioTime: skippedTime / 1000 };
 };
 
 const changeScene = (sceneItemId = 0) => {
@@ -92,19 +106,6 @@ const changeScene = (sceneItemId = 0) => {
             changeScene(sceneItemId + 1);
         }
     }, sceneItem.duration);
-};
-
-const getStartingId = (timeToSkip: number) => {
-    let timeInMs = timeToSkip * 1000;
-    let skippedTime = 0;
-    let currId = 0;
-
-    while (skippedTime < timeInMs) {
-        skippedTime += scene[currId].duration;
-        currId++;
-    }
-
-    return { sceneId: currId, audioTime: skippedTime / 1000 };
 };
 
 const handleAddingScene = (sceneItem: sceneItemType) => {
@@ -127,17 +128,22 @@ const handleAddingScene = (sceneItem: sceneItemType) => {
     }
 
     for (let i = 0; i < variant.addingText.length; i++) {
-        let { text, wrapper } = variant.addingText[i];
+        let { text, wrapper, spread, textLevel } = variant.addingText[i];
         let wrapperElement = textWrapperElement;
+        let initialText = text;
 
         if (wrapper) {
             wrapperElement = document.querySelector(`.${wrapper}`)!;
         }
 
+        if (spread) {
+            initialText = text.slice(0, spread.index);
+        }
+
         wrapperElement.innerHTML += `
-            <div class="text ${i !== 0 && "hiddenText"}">
-                ${text}
-            </div>
+            <div class="text ${
+                i !== 0 && "hiddenText"
+            } ${textLevel}">${initialText}</div>
         `;
     }
 
@@ -156,12 +162,52 @@ const changeAddingScene = (addingSceneId = 0, variant: variant) => {
     //     changeAddingScene(1, variant);
     //     return;
     // }
-    const { timeToWait } = variant.addingText[addingSceneId];
+    const { timeToWait, spread, text } = variant.addingText[addingSceneId];
     const hiddenElements = document.getElementsByClassName("hiddenText");
-    if (hiddenElements.length < 1) return;
+    const firstElement = hiddenElements[0];
+    if (!firstElement) return;
 
     setTimeout(() => {
-        hiddenElements[0].classList.remove("hiddenText");
+        console.log(firstElement);
+        firstElement.classList.remove("hiddenText");
+
+        if (spread) {
+            spreadLetter(firstElement, spread, spread.index, text, 1);
+        }
+
         changeAddingScene(addingSceneId + 1, variant);
     }, timeToWait);
+};
+
+const spreadLetter = (
+    element: Element,
+    spread: spreadLetter,
+    spreadingIndex: number,
+    text: string,
+    numSpreaded = 0
+) => {
+    let delay = spread.timePerLetter;
+
+    if (numSpreaded === 0 || numSpreaded === 1) {
+        delay += spread.delay;
+    }
+
+    setTimeout(() => {
+        if (!text[spreadingIndex]) return;
+        element.innerHTML += text[spreadingIndex];
+
+        if (numSpreaded < spread.count) {
+            spreadLetter(element, spread, spread.index, text, numSpreaded + 1);
+        }
+        if (numSpreaded >= spread.count) {
+            if (spreadingIndex + 1 > text.length) return;
+            spreadLetter(
+                element,
+                spread,
+                spreadingIndex + 1,
+                text,
+                numSpreaded + 1
+            );
+        }
+    }, delay);
 };
