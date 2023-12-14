@@ -8,6 +8,16 @@
     padding: 0;
 }
 
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
+
 html,
 body,
 #app {
@@ -36,7 +46,7 @@ body,
     height: 100%;
     display: flex;
 
-    font-size: 150px;
+    font-size: 120px;
     font-weight: bold;
     text-shadow: 1px 1px 5px white;
     justify-content: center;
@@ -88,11 +98,11 @@ body,
 }
 
 .highText {
-    font-size: 150px;
+    font-size: 120px;
 }
 
 .mediumText {
-    font-size: 80px;
+    font-size: 100px;
 }
 
 .lowText {

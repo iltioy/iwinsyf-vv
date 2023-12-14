@@ -1,15 +1,72 @@
 import iwinsyf_audio from "./audio/setitoff.mp3";
-import { scene2 as scene } from "./scenes";
+import { scene4 as scene } from "./scenes";
+
+// anim
+
+// const anDiv = document.querySelector(".animate")
+
+// const arr = [
+//   {
+//     color: "white",
+//     time: 100
+//   },
+//    {
+//     color: "black",
+//     time: 100
+//   },
+//    {
+//     color: "white",
+//     time: 100
+//   },
+//      {
+//     color: "black",
+//     time: 100
+//   },
+//    {
+//     color: "white",
+//     time: 100
+//   },
+//    {
+//     color: "black",
+//     time: 440
+//   },
+// ]
+
+// function timeout(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
+// const startAnim = async () => {
+//     let i = 0;
+
+//     while (i !== 200) {
+//       if (arr[i%arr.length].color === "black") {
+//         anDiv.classList.add("black")
+//         anDiv.classList.remove("white")
+//       } else {
+//         anDiv.classList.remove("black")
+//         anDiv.classList.add("white")
+//       }
+//       await timeout(arr[i%arr.length].time);
+
+//       i++;
+//       console.log(i)
+//     }
+// }
+
+// console.log("hahahhahahhaha")
+
+// startAnim();
 
 interface sceneItemType {
     text: string;
     duration: number;
+    textLevel?: textLevels;
     variant?: variant;
 }
 
 interface variant {
     types: variants[];
-    textLevel: textLevels;
     textDirection: "row" | "column";
     addingText: addingTextItem[];
     wrappers: wrapper[];
@@ -33,7 +90,7 @@ enum textLevels {
 interface addingTextItem {
     text: string;
     timeToWait: number;
-    textLevel: textLevels;
+    textLevel?: textLevels;
     wrapper?: string;
     spread?: spreadLetter;
 }
@@ -58,7 +115,6 @@ interface frucration {
     near: number;
     percanrageDifference: number;
 }
-
 let sceneElement = document.querySelector(".scene")!;
 let textSceneElement = document.querySelector(".text")!;
 let furcationElement = document.querySelector(".furcation")!;
@@ -115,7 +171,7 @@ const changeScene = (sceneItemId = 0) => {
     textWrapperElement.classList.add("row");
     furcationElement.classList.add("disabled");
 
-    textWrapperElement.innerHTML = sceneItem.text;
+    textWrapperElement.innerHTML = `<div class="${sceneItem.textLevel}">${sceneItem.text}</div>`;
     handleFurcation(sceneItem, 0);
     handleAddingScene(sceneItem);
 
@@ -131,7 +187,7 @@ const handleAddingScene = (sceneItem: sceneItemType) => {
     if (!sceneItem.variant.types.includes(variants.addingText)) return;
     if (sceneItem.variant.addingText.length === 0) return;
 
-    const { variant } = sceneItem;
+    const { variant, textLevel } = sceneItem;
 
     if (variant.textDirection == "column") {
         textWrapperElement.classList.remove("row");
@@ -146,7 +202,7 @@ const handleAddingScene = (sceneItem: sceneItemType) => {
     }
 
     for (let i = 0; i < variant.addingText.length; i++) {
-        let { text, wrapper, spread, textLevel } = variant.addingText[i];
+        let { text, wrapper, spread } = variant.addingText[i];
         let wrapperElement = textWrapperElement;
         let initialText = text;
 
@@ -189,6 +245,7 @@ const changeAddingScene = (addingSceneId = 0, variant: variant) => {
         console.log(firstElement);
         firstElement.classList.remove("hiddenText");
 
+        console.log({ spread });
         if (spread) {
             spreadLetter(firstElement, spread, spread.index, text, 1);
         }
@@ -204,6 +261,7 @@ const spreadLetter = (
     text: string,
     numSpreaded = 0
 ) => {
+    console.log(spread);
     let delay = spread.timePerLetter;
 
     if (numSpreaded === 0 || numSpreaded === 1) {
@@ -238,6 +296,7 @@ const handleFurcation = (sceneItem: sceneItemType, iteration = 0) => {
 
     if (!frucration || !types.includes(variants.furcation)) return;
     const { delayTime, timesToIterate, percanrageDifference } = frucration;
+    let delay = iteration === 0 ? 0 : delayTime;
 
     if (timesToIterate === iteration - 1) return;
 
@@ -253,7 +312,7 @@ const handleFurcation = (sceneItem: sceneItemType, iteration = 0) => {
             classes += " furcationShadow ";
         }
 
-        classes += sceneItem.variant?.textLevel;
+        classes += sceneItem?.textLevel;
 
         if (frucration.reverse) {
             console.log(100 - percanrage);
@@ -330,5 +389,5 @@ const handleFurcation = (sceneItem: sceneItemType, iteration = 0) => {
         // reverse
 
         handleFurcation(sceneItem, iteration + 1);
-    }, delayTime);
+    }, delay);
 };

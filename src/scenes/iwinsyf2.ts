@@ -1,12 +1,12 @@
 interface sceneItemType {
     text: string;
     duration: number;
+    textLevel?: textLevels;
     variant?: variant;
 }
 
 interface variant {
     types: variants[];
-    textLevel: textLevels;
     textDirection: "row" | "column";
     addingText: addingTextItem[];
     wrappers: wrapper[];
@@ -64,7 +64,6 @@ export const testScene: sceneItemType[] = [
             types: [variants.furcation],
             addingText: [],
             textDirection: "row",
-            textLevel: textLevels.large,
             wrappers: [],
             frucration: {
                 delayTime: 50,
@@ -87,10 +86,70 @@ export const scene2: sceneItemType[] = [
         text: "I WISH",
         duration: 400,
     },
+    // {
+    //     text: "I ",
+    //     duration: 100,
+    // },
+    // {
+    //     text: "WISH",
+    //     duration: 300,
+    // },
+    // {
+    //     text: "",
+    //     duration: 400,
+    //     variant: {
+    //         textLevel: textLevels.high,
+    //         textDirection: "row",
+    //         types: [variants.addingText],
+    //         wrappers: [],
+    //         addingText: [
+    //             {
+    //                 text: "I ",
+    //                 textLevel: textLevels.high,
+    //                 timeToWait: 0,
+    //             },
+    //             {
+    //                 text: "WISH",
+    //                 textLevel: textLevels.high,
+    //                 timeToWait: 100,
+    //             },
+    //         ],
+    //     },
+    // },
     {
         text: "I NEVER",
-        duration: 500,
+        duration: 400,
     },
+    // {
+    //     text: "I ",
+    //     duration: 250,
+    // },
+    // {
+    //     text: "NEVER",
+    //     duration: 250,
+    // },
+    // {
+    //     text: "",
+    //     duration: 400,
+    //     variant: {
+    //         textLevel: textLevels.high,
+    //         textDirection: "row",
+    //         types: [variants.addingText],
+    //         wrappers: [],
+    //         addingText: [
+    //             {
+    //                 text: "I ",
+    //                 textLevel: textLevels.high,
+    //                 timeToWait: 0,
+    //             },
+    //             {
+    //                 text: "NEVER",
+    //                 textLevel: textLevels.high,
+    //                 timeToWait: 100,
+    //             },
+    //         ],
+    //     },
+    // },
     {
         text: "SAW",
         duration: 300,
@@ -127,7 +186,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 2700,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "column",
             types: [variants.addingText],
             wrappers: [
@@ -168,6 +226,7 @@ export const scene2: sceneItemType[] = [
             ],
         },
     },
+
     {
         text: "HANGING",
         duration: 400,
@@ -201,7 +260,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 1400,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "column",
             types: [variants.addingText],
             wrappers: [],
@@ -231,7 +289,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 2400,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "column",
             types: [variants.addingText],
             wrappers: [
@@ -284,7 +341,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 3100,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "column",
             types: [variants.addingText],
             wrappers: [
@@ -330,7 +386,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 3100,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "column",
             types: [variants.addingText],
             wrappers: [],
@@ -372,7 +427,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 2900,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "row",
             types: [variants.addingText],
             wrappers: [],
@@ -478,7 +532,6 @@ export const scene2: sceneItemType[] = [
         text: "",
         duration: 1600,
         variant: {
-            textLevel: textLevels.high,
             textDirection: "row",
             types: [variants.addingText],
             wrappers: [],
