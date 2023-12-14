@@ -10,6 +10,7 @@ interface variant {
     textDirection: "row" | "column";
     addingText: addingTextItem[];
     wrappers: wrapper[];
+    frucration?: frucration;
 }
 
 enum variants {
@@ -22,11 +23,8 @@ enum textLevels {
     low = "lowText",
     medium = "mediumText",
     high = "highText",
-}
-
-interface wrapper {
-    name: string;
-    flex: "row" | "column";
+    large = "largeText",
+    extraLarge = "extraLargeText",
 }
 
 interface addingTextItem {
@@ -37,12 +35,48 @@ interface addingTextItem {
     spread?: spreadLetter;
 }
 
+interface wrapper {
+    name: string;
+    flex: "row" | "column";
+}
+
 interface spreadLetter {
     index: number;
     count: number;
     timePerLetter: number;
     delay: number;
 }
+
+interface frucration {
+    timesToIterate: number;
+    delayTime: number;
+    textShadow: boolean;
+    reverse: boolean;
+    near: number;
+    percanrageDifference: number;
+}
+
+export const testScene: sceneItemType[] = [
+    {
+        duration: 1000,
+        text: "ARE",
+        variant: {
+            types: [variants.furcation],
+            addingText: [],
+            textDirection: "row",
+            textLevel: textLevels.large,
+            wrappers: [],
+            frucration: {
+                delayTime: 50,
+                timesToIterate: 12,
+                textShadow: true,
+                reverse: false,
+                near: 5,
+                percanrageDifference: 20,
+            },
+        },
+    },
+];
 
 export const scene2: sceneItemType[] = [
     {
@@ -55,7 +89,7 @@ export const scene2: sceneItemType[] = [
     },
     {
         text: "I NEVER",
-        duration: 300,
+        duration: 500,
     },
     {
         text: "SAW",
@@ -67,7 +101,7 @@ export const scene2: sceneItemType[] = [
     },
     {
         text: "FACE",
-        duration: 700,
+        duration: 600,
     },
     {
         text: "THEN",
@@ -372,11 +406,11 @@ export const scene2: sceneItemType[] = [
     },
     {
         text: "INSIDE",
-        duration: 900,
+        duration: 750,
     },
     {
         text: "MY HEAD",
-        duration: 1600,
+        duration: 1730,
         // variant: {
         //     textDirection: "row",
         //     textLevel: textLevels.high,
@@ -472,4 +506,23 @@ export const scene2: sceneItemType[] = [
             ],
         },
     },
+    // {
+    //     duration: 1000,
+    //     text: "ARE",
+    //     variant: {
+    //         types: [variants.furcation],
+    //         addingText: [],
+    //         textDirection: "row",
+    //         textLevel: textLevels.large,
+    //         wrappers: [],
+    //         frucration: {
+    //             delayTime: 50,
+    //             timesToIterate: 12,
+    //             textShadow: true,
+    //             reverse: false,
+    //             near: 5,
+    //             percanrageDifference: 20,
+    //         },
+    //     },
+    // },
 ];

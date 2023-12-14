@@ -13,6 +13,7 @@ interface variant {
     textDirection: "row" | "column";
     addingText: addingTextItem[];
     wrappers: wrapper[];
+    frucration?: frucration;
 }
 
 enum variants {
@@ -25,11 +26,8 @@ enum textLevels {
     low = "lowText",
     medium = "mediumText",
     high = "highText",
-}
-
-interface wrapper {
-    name: string;
-    flex: "row" | "column";
+    large = "largeText",
+    extraLarge = "extraLargeText",
 }
 
 interface addingTextItem {
@@ -40,6 +38,11 @@ interface addingTextItem {
     spread?: spreadLetter;
 }
 
+interface wrapper {
+    name: string;
+    flex: "row" | "column";
+}
+
 interface spreadLetter {
     index: number;
     count: number;
@@ -47,8 +50,18 @@ interface spreadLetter {
     delay: number;
 }
 
+interface frucration {
+    timesToIterate: number;
+    delayTime: number;
+    textShadow: boolean;
+    reverse: boolean;
+    near: number;
+    percanrageDifference: number;
+}
+
 let sceneElement = document.querySelector(".scene")!;
 let textSceneElement = document.querySelector(".text")!;
+let furcationElement = document.querySelector(".furcation")!;
 let textWrapperElement = document.querySelector(".textWrapper")!;
 
 const audio = new Audio(iwinsyf_audio);
@@ -59,6 +72,7 @@ export const setupScene = () => {
     sceneElement = document.querySelector(".scene")!;
     textSceneElement = document.querySelector(".text")!;
     textWrapperElement = document.querySelector(".textWrapper")!;
+    furcationElement = document.querySelector(".furcation")!;
 
     sceneElement.addEventListener("click", () => {
         if (!isScenePlaying) {
@@ -71,8 +85,9 @@ export const setupScene = () => {
 export const runScene = () => {
     sceneElement = document.querySelector(".scene")!;
     textSceneElement = document.querySelector(".text")!;
+    furcationElement = document.querySelector(".furcation")!;
 
-    const { audioTime, sceneId } = getStartingId(25);
+    const { audioTime, sceneId } = getStartingId(0);
     audio.currentTime = audioTime;
     audio.play();
 
@@ -95,10 +110,13 @@ const getStartingId = (timeToSkip: number) => {
 const changeScene = (sceneItemId = 0) => {
     let sceneItem: sceneItemType = scene[sceneItemId];
 
+    textWrapperElement.classList.remove("disabled");
     textWrapperElement.classList.remove("column");
     textWrapperElement.classList.add("row");
+    furcationElement.classList.add("disabled");
 
     textWrapperElement.innerHTML = sceneItem.text;
+    handleFurcation(sceneItem, 0);
     handleAddingScene(sceneItem);
 
     setTimeout(() => {
@@ -210,4 +228,107 @@ const spreadLetter = (
             );
         }
     }, delay);
+};
+
+const handleFurcation = (sceneItem: sceneItemType, iteration = 0) => {
+    const { variant, text } = sceneItem;
+    if (!variant) return;
+
+    const { frucration, types } = variant;
+
+    if (!frucration || !types.includes(variants.furcation)) return;
+    const { delayTime, timesToIterate, percanrageDifference } = frucration;
+
+    if (timesToIterate === iteration - 1) return;
+
+    console.log("fruc!");
+    setTimeout(() => {
+        textWrapperElement.classList.add("disabled");
+        furcationElement.classList.remove("disabled");
+
+        let percanrage = (100 / timesToIterate) * iteration;
+        let classes = "frucrationItem ";
+
+        if (frucration.textShadow) {
+            classes += " furcationShadow ";
+        }
+
+        classes += sceneItem.variant?.textLevel;
+
+        if (frucration.reverse) {
+            console.log(100 - percanrage);
+            furcationElement.innerHTML += `
+            <div class="${classes}" 
+                style="left: ${100 - percanrage}%; 
+                top: ${percanrage}%; 
+                transform: translate(-${100 - percanrage}%, -${percanrage}%)";>
+                ${text}
+            </div>
+        `;
+        } else {
+            furcationElement.innerHTML += `
+            <div class="${classes}" style="
+                left: ${percanrage}%; top: ${percanrage}%; 
+                transform: translate(-${percanrage}%, -${percanrage}%); 
+                 ">
+                ${text}
+            </div>`;
+
+            for (let i = 1; i <= frucration.near; i++) {
+                furcationElement.innerHTML += `
+                <div class="${classes}" style="
+                    left: ${
+                        percanrage + percanrageDifference * i
+                    }%; top: ${percanrage}%; 
+                    transform: translate(-${
+                        percanrage + percanrageDifference * i
+                    }%, -${percanrage}%); 
+                     ">
+                    ${text}
+                </div>`;
+
+                furcationElement.innerHTML += `
+                <div class="${classes}" style="
+                    left: ${
+                        percanrage - percanrageDifference * i
+                    }%; top: ${percanrage}%; 
+                    transform: translate(-${
+                        percanrage - percanrageDifference * i
+                    }%, -${percanrage}%); 
+                     ">
+                    ${text}
+                </div>`;
+            }
+        }
+
+        // near
+
+        // furcationElement.innerHTML += `
+        //         <div class=" ${
+        //             sceneItem.variant?.textLevel
+        //         }" style="position:absolute; left: ${
+        //     percanrage + 15
+        // }%; top: ${percanrage}%; transform: translate(-${
+        //     percanrage + 15
+        // }%, -${percanrage}%);
+        //     text-shadow: 10px 15px ${5}px #cccccc;
+        //     ">${text}</div>
+        //     `;
+
+        // furcationElement.innerHTML += `
+        //     <div class=" ${
+        //         sceneItem.variant?.textLevel
+        //     }" style="position:absolute; left: ${
+        //     percanrage - 15
+        // }%; top: ${percanrage}%; transform: translate(-${
+        //     percanrage - 15
+        // }%, -${percanrage}%);
+        // text-shadow: 10px 15px ${5}px #cccccc;
+        // ">${text}</div>
+        // `;
+
+        // reverse
+
+        handleFurcation(sceneItem, iteration + 1);
+    }, delayTime);
 };

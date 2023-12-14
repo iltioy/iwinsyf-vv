@@ -6,6 +6,7 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <div class="textWrapper row">
       <div class="text">I WISH</div> 
     </div>
+    <div class="furcation disabled"></div>
   </div>
 `;
 
